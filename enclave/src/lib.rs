@@ -13,22 +13,30 @@
 // "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
-// under the License.
+// under the License..
 
-/* This is your enclave EDL file, please specify the EDL files you need and ECALLs/OCALLs needed */
+#![crate_name = "sample"]
+#![crate_type = "staticlib"]
 
-enclave {
-    from "sgx_tstd.edl" import *;
-    from "sgx_stdio.edl" import *;
-    from "sgx_backtrace.edl" import *;
-    from "sgx_tstdc.edl" import *;
-    trusted
-    {
-        /* ECALLs */
-        public sgx_status_t ecall_test([in, size=len] const uint8_t* some_string, size_t len);
-    };
-    untrusted
-    {
-        /* OCALLs */
-    };
-};
+#![cfg_attr(not(target_env = "sgx"), no_std)]
+#![cfg_attr(target_env = "sgx", feature(rustc_private))]
+
+extern crate sgx_types;
+#[cfg(not(target_env = "sgx"))]
+#[macro_use]
+extern crate sgx_tstd as std;
+
+use sgx_types::*;
+use std::io::{self, Write};
+use std::slice;
+
+#[no_mangle]
+pub extern "C" fn ecall_test(some_string: *const u8, some_len: usize) -> sgx_status_t {
+
+    let str_slice = unsafe { slice::from_raw_parts(some_string, some_len) };
+    let _ = io::stdout().write(str_slice);
+
+    println!("Message from the enclave");
+
+    sgx_status_t::SGX_SUCCESS
+}

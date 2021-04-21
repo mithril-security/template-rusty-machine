@@ -19,6 +19,10 @@ GCC_STEP2_T = -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_
 	-Wl,--start-group -lsgx_tstdc -l$(SERVICE_LIB) -lsgx_tcrypto -L$(LIB) -lenclave -Wl,--end-group \
 	-Wl,--version-script=$(SRC_T)Enclave.lds $(ENCLAVE_LDFLAGS)
 FILES_T = Enclave_t.c 
+FILES_T_H = Enclave_t.h
+EDL_FILE = Enclave.edl
+TOML = Cargo.toml
+ENCLAVE_CONFIG = Enclave.config.xml
 SGX_ARCH = x64
 SGX_SDK = /opt/sgxsdk
 TRTS_LIB = sgx_trts
@@ -95,7 +99,7 @@ ifeq ($(SGX_MODE), SW)
 else
 	@echo "\033[32mHardware mode\033[0m"
 endif
-	@echo "\033[32mSigning the enclave...\033[0m"
+	@echo "\033[32mGenerating keys and signing the enclave...\033[0m"
 	@mkdir -p $(BIN)
 	@openssl genrsa -out Enclave_private.pem -3 3072
 	@openssl rsa -in Enclave_private.pem -pubout -out Enclave_public.pem
@@ -105,7 +109,7 @@ $(BIN_T): $(NAME_T_D)
 	@echo "\033[32mBuilding the enclave...\033[0m"
 	@$(CXX) $(OUTPUT_W_FT) -o $@ $(GCC_STEP2_T) 
 
-$(NAME_T_D): $(FILES_T_F) $(OUTPUT_W_FT) $(FILES_RUST_F) # We added as a reference the rust files, so Make can detect if the rust files are newer than the binary
+$(NAME_T_D): $(FILES_T_F) $(OUTPUT_W_FT) $(FILES_RUST_F) $(EDL_FILE) $(ENCLAVE_CONFIG) $(TOML) # We added as a reference the rust files, along with the EDL, the XML config file and the cargo.toml file, so Make can detect if any change was made
 ifeq ($(XARGO_SGX), 1) # Building with Xargo
 	@echo "\033[32mBuilding enclave static library with Xargo...\033[0m"
 	RUST_TARGET_PATH=$(XARGO_PATH) xargo build --target x86_64-unknown-linux-sgx --release
@@ -125,21 +129,23 @@ $(OBJ_T)%.o:$(SRC_T)%.c
 	@echo "\033[32m$?: Build in progress...\033[0m"
 	@$(CC) $(FLAGS) $(GCC_STEP1_T) -o $@ -c $?
 
-clean:
+clean: c_clean
 	@rm -rf $(OBJ_T)
 	@echo "\033[32mObject files deleted\033[0m"
 
-fclean: clean c_clean fclean_enclave
+fclean: clean fclean_enclave
 
 fclean_enclave: 
 	@echo "\033[32mBinary file $(NAME) deleted\033[0m"
 	@rm -f $(NAME)
 	@rm -f $(BIN_T)
+	rm -f $(LIB)libenclave.a
 	@cargo clean && rm -f Cargo.lock
 
 c_clean:
 	@echo "\033[32mC edl generated files deleted\033[0m"
 	@rm -rf $(FILES_T_F)
+	@rm -f $(FILES_T_H)
 
 re: fclean all
 

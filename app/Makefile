@@ -13,6 +13,9 @@ SGX_SDK = /opt/sgxsdk
 FLAGS = -Wall -Wextra
 GCC_STEP1_U = -I $(SRC_U) -I./include -I$(SGX_SDK)/include -I$(CUSTOM_EDL_PATH) -fPIC -Wno-attributes $(SGX_COMMON_CFLAGS)
 FILES_U = Enclave_u.c 
+FILES_U_H = Enclave_u.h
+BUILD_RS = build.rs
+TOML = Cargo.toml 
 SGX_ARCH = x64
 SGX_SDK = /opt/sgxsdk
 TRTS_LIB = sgx_trts
@@ -84,10 +87,9 @@ $(OBJ_U)%.o:$(SRC_U)%.c
 	@echo "\033[32m$?: Build in progress...\033[0m"
 	@$(CC) $(FLAGS) $(GCC_STEP1_U) -o $@ -c $?
 
-
 # We print the compilation mode we're in (hardware/software mode), just as a reminder.
 
-$(BIN_U): $(NAME_U_D) $(FILES_RUST_F) # We added as a reference the rust file, so Make can detect if the rust files are newer than the binary
+$(BIN_U): $(NAME_U_D) $(FILES_RUST_F) $(FILES_U_H) $(BUILD_RS) $(TOML) # We added as a reference the rust files, along with the build.rs file and the cargo.toml file, so Make can detect if any change was made
 ifeq ($(SGX_MODE), SW)
 	@echo "\033[32mSoftware / Simulation mode\033[0m"
 else
@@ -99,21 +101,23 @@ endif
 	@mkdir -p $(BIN)
 	@cp $(SRC_U)/target/release/app $(BIN)
 
-clean:
+clean: c_clean
 	@rm -rf $(OBJ_U)
 	@echo "\033[32mObject files deleted\033[0m"
 
-fclean: clean c_clean fclean_host
+fclean: clean fclean_host
 
 fclean_host:
 	@echo "\033[32mBinary file $(BIN_U) deleted\033[0m"
 	@rm -f $(BIN_U)
+	@rm -f $(NAME_U_D)
 	@cargo clean && rm -f Cargo.lock
 
 
 c_clean:
 	@echo "\033[32mC edl generated files deleted\033[0m"
 	@rm -rf $(FILES_U_F)
+	@rm -rf $(FILES_U_H)
 
 re: fclean all
 
