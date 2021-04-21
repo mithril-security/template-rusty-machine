@@ -48,7 +48,7 @@ You need to follow a few steps to use this template properly:
 ### Before starting the building process, please make sure you downloaded the Rust SGX SDK repository, we're going to need the EDL and headers files joined in the SDK.
 
 Once you downloaded the Rust SGX SDK, you have multiple ways to start the building process: 
-- Run this command: ```CUSTOM_EDL_PATH=~/teaenclave/edl CUSTOM_COMMON_PATH=~/teaenclave/common make``` (replace ~/teaenclave by the actual SDK location)
+- Run this command: ```CUSTOM_EDL_PATH=~/teaenclave/edl CUSTOM_COMMON_PATH=~/teaenclave/common make``` (replace ```~/teaenclave``` by the actual SDK location)
 - You can also run the command export (```export CUSTOM_EDL_PATH=~/teaenclave/edl```), and specify the variables before calling make. It is adviced to add this command on your ```.bashrc``` file (if you use bash), or your favorite shell configuration file.
 
 ### By default, your project will be compiled in hardware mode. If you wish to compile your project in software/simulation mode, you will need to specify it, either by adding ```SGX_MODE=SW``` before make, or by setting the SGX_MODE variable environment to SW.
