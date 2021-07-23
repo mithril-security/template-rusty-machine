@@ -112,8 +112,9 @@ $(BIN_T): $(NAME_T_D)
 $(NAME_T_D): $(FILES_T_F) $(OUTPUT_W_FT) $(FILES_RUST_F) $(EDL_FILE) $(ENCLAVE_CONFIG) $(TOML) # We added as a reference the rust files, along with the EDL, the XML config file and the cargo.toml file, so Make can detect if any change was made
 ifeq ($(XARGO_SGX), 1) # Building with Xargo
 	@echo "\033[32mBuilding enclave static library with Xargo...\033[0m"
-	RUST_TARGET_PATH=$(XARGO_PATH) xargo build --target x86_64-unknown-linux-sgx --release
-	@cp ./target/x86_64-unknown-linux-sgx/release/$(ENCLAVE_CARGO_LIB) $(LIB)libenclave.a
+	@# RUSTFLAGS="-Z force-unstable-if-unmarked" is needed because https://github.com/apache/incubator-teaclave-sgx-sdk/issues/231
+	RUSTFLAGS="-Z force-unstable-if-unmarked" RUST_TARGET_PATH=$(XARGO_PATH) xargo build --target x86_64-mesalock-unknown-sgx --release
+	@cp ./target/x86_64-mesalock-unknown-sgx/release/$(ENCLAVE_CARGO_LIB) $(LIB)libenclave.a
 else
 	@echo "\033[32mBuilding enclave static library with Cargo...\033[0m"
 	@cargo build --release
