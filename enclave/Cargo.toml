@@ -11,13 +11,11 @@ crate-type = ["staticlib"]
 default = []
 
 [target.'cfg(not(target_env = "sgx"))'.dependencies] # You can remove what you don't need, except types and tstd
-sgx_types = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_tstd = { git = "https://github.com/apache/teaclave-sgx-sdk.git", features = ["backtrace"] }
-sgx_tcrypto = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_trts = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_tseal = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_serialize = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_alloc = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-sgx_libc = { git = "https://github.com/apache/teaclave-sgx-sdk.git" }
-
-[patch.'https://github.com/apache/teaclave-sgx-sdk.git']
+sgx_types     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_tstd      = { features = ["backtrace"], branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_tcrypto   = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_trts      = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_tseal     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_serialize = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_alloc     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+sgx_libc      = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
