@@ -1,7 +1,7 @@
 [package]
-name = "template"
+name = "template-rusty-machine"
 version = "1.0.0"
-authors = ["The Teaclave Authors"]
+authors = ["Mithril Security"]
 
 [lib]
 name = "sample" # Library name. If you change this, please reflect those changes in the Makefile on the variable ENCLAVE_CARGO_LIB
@@ -10,12 +10,5 @@ crate-type = ["staticlib"]
 [features]
 default = []
 
-[target.'cfg(not(target_env = "sgx"))'.dependencies] # You can remove what you don't need, except types and tstd
-sgx_types     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_tstd      = { features = ["backtrace"], branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_tcrypto   = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_trts      = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_tseal     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_serialize = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_alloc     = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
-sgx_libc      = { branch = "dev", git = "ssh://git@github.com/mithril-security/teaclave-sgx-sdk.git" }
+[dependencies]
+rusty-machine = {git = "https://github.com/AtheMathmo/rusty-machine.git"}

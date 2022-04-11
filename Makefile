@@ -1,5 +1,12 @@
 # Dummy makefile, will call the host and enclave makefile when requested.
 
+CUSTOM_EDL_PATH != realpath 'sdk/edl'
+CUSTOM_COMMON_PATH != realpath 'sdk/common'
+XARGO_PATH != realpath 'sdk/xargo'
+
+export CUSTOM_EDL_PATH CUSTOM_COMMON_PATH XARGO_PATH
+
+
 SRC_U = app/
 SRC_T = enclave/
 
